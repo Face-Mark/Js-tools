@@ -1,0 +1,11 @@
+{
+  "name": "js-tools",
+  "version": "1.0.0",
+  "description": "js实用方法收集",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "huge",
+  "license": "ISC"
+}
