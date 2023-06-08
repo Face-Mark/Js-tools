@@ -372,3 +372,98 @@ export function Modules() {
   })
   return arr
 }
+
+/**
+ * 修改地址栏
+ * @param { String } replaceUrl 完整地址，有的情况下整个替换
+ * @param { Objcet } parame 需要修改的参数
+ */
+export function ReplaceParamVal(replaceUrl, parame) {
+  let url = ''
+  if (replaceUrl) {
+    url = replaceUrl
+  } else {
+    if (JSON.stringify(parame) == '{}') return false
+    const tempObj = {}
+    Object.keys(parame).forEach(key => {
+      tempObj[key] = URLencode(parame[key])
+    })
+    url = spliceParame((location.origin + location.pathname), tempObj)
+  }
+  history.replaceState('', '', url)
+};
+
+/**
+ * 处理地址栏中的+号
+ * @param { String } url 地址（非整个Url，含有特殊符号的字段）
+ */
+export function URLencode(url) {
+  // eslint-disable-next-line no-useless-escape
+  return encodeURI(url).replace(/\+/g, '%2B').replace(/\"/g, '%22').replace(/\'/g, '%27').replace(/\//g, '%2F')
+};
+
+/**
+ * 禁止页面滚动
+ */
+export function BanScroll(flag) {
+  if (flag) {
+    document.documentElement.style.overflow = 'hidden'
+  } else {
+    document.documentElement.style.overflow = null
+  }
+};
+
+/**
+ * 获取滚动条的宽度
+ */
+export function getScrollWidth() {
+  const scroll = document.createElement('div')
+  const scrollIn = document.createElement('div')
+  scroll.appendChild(scrollIn)
+  scroll.style.width = '100px'
+  scroll.style.height = '50px'
+  scroll.style.overflow = 'scroll'
+  scroll.style.marginLeft = '-100000px'
+  document.body.appendChild(scroll)
+  const scrollInWidth = scrollIn.offsetWidth
+  const scrollWidth = scroll.offsetWidth
+  const tmp = setTimeout(() => {
+    document.body.removeChild(scroll)
+    clearTimeout(tmp)
+  }, 10)
+  return scrollWidth - scrollInWidth
+}
+
+/**
+ * 睡眠（阻塞进程，建议使用settimeout）
+ * @param {Number} time 时间（毫秒）
+ */
+export function Sleep(time){
+	let timeStamp = new Date().getTime();
+	let endTime = timeStamp + time;
+	let num = 0
+	while(true){
+		num++
+		if (new Date().getTime() > endTime || num > 100000000){
+			return;
+		} 
+	}
+}
+
+/**
+ * 防抖函数
+ * @param {Fn} func 需要执行的函数
+ * @param {Number} wait 等待描述
+ * @returns {Fn} 返回函数
+ */
+// 使用: 函数名: a:Debounced(function(){})
+
+export function Debounced(func, wait = 1500) {
+  let timeout;
+  return function (event) {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      func.call(this, event)
+    }, wait)
+  }
+}
