@@ -355,22 +355,18 @@ export function Modules() {
  * @param {Array} arr 返回值
  */
  export function get_level_all(data, id, arr = []) {
-  data.find((item) => {
+  for (const item of data) {
     if (item.id === id) {
-      arr.push(item.id)
-      return true
-    } else if (item.hasChildren && item.children.length) {
-      arr = get_level_all(item.children, id, arr)
-      if (arr.length) {
-        arr.push(item.id)
-        return true
-      } else {
-        return false
+      arr.push(item.id);
+    }
+    if (item.hasChildren && item.children.length) {
+      const childArr = get_level_all(item.children, id);
+      if (childArr.length > 0) {
+        arr.push(item.id, ...childArr);
       }
     }
-    return false
-  })
-  return arr
+  }
+  return arr;
 }
 
 /**
@@ -392,6 +388,25 @@ export function ReplaceParamVal(replaceUrl, parame) {
   }
   history.replaceState('', '', url)
 };
+
+/**
+ * Splicing parameters after address
+ * @param {String} baseUrl 基础url
+ * @param {Object} data 需要拼接的参数
+ * @returns Boolean 返回true ''
+ */
+export function spliceParame(baseUrl, data) {
+  if (!baseUrl || !data || Object.keys(data).length === 0) {
+    return baseUrl;
+  }
+  const url = new URL(baseUrl);
+  const searchParams = new URLSearchParams(url.search);
+  for (const key in data) {
+    searchParams.set(key, data[key]);
+  }
+  url.search = searchParams.toString();
+  return url.toString();
+}
 
 /**
  * 处理地址栏中的+号
