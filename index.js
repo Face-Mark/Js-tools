@@ -482,3 +482,32 @@ export function Debounced(func, wait = 1500) {
     }, wait)
   }
 }
+
+/**
+ * 三级id查找
+ * @param {Array} list 总数组（key：id， 子节点：children）
+ * @param {Array} list2 需要查找的id集合
+ * @returns 输出匹配的路径 例：[[1,2], [1,2,4]...]
+ */
+export function findMatchingIds(list, list2) {
+  const matchingIds = []
+
+  function recursiveSearch(data, targetIds, path) {
+    for (const item of data) {
+      const currentPath = [...path, item.id] // 当前路径
+
+      if (targetIds.includes(item.id)) {
+        matchingIds.push(currentPath) // 将匹配的路径添加到结果中
+      }
+
+      if (item.children) {
+        recursiveSearch(item.children, targetIds, currentPath) // 递归搜索子级，传入当前路径
+      }
+    }
+  }
+
+  const targetIds = list2.map(item => item.id)
+  recursiveSearch(list, targetIds, [])
+
+  return matchingIds
+}
